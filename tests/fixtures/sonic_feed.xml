@@ -1,0 +1,27 @@
+<rss version="2.0" extension="microblog">
+    <channel>
+    	<username>sonicrocketman</username>
+        <user_id>1234567890</user_id>
+        <user_full_name>Brian Schrader</user_full_name>
+        <description>Coffee lover. Typical microblog bio writer. Techie. Foodie.</description>
+        <link>http://127.0.0.1:5000/feed</link>
+        <profile>http://127.0.0.1:5000</profile>
+        <blocks count=""/>
+        <follows count=""/>
+        <reply_to>
+            <link>http://service.tld/reply</link>
+            <reply_to_user_id>sample_userid</reply_to_user_id>
+            <reply_to_status_id/>
+            <reply_from_user_id/>
+            <reply_status_id/>
+            <user_link/>
+        </reply_to>
+        <docs>http://example.com/docs</docs>
+        <language>en</language>
+        <lastBuildDate></lastBuildDate>
+	<item><guid>213310573851215529614522650235796765742</guid><pubdate>Thu, 12 Mar 2015 05:33:41 +0000</pubdate><description>PLEASE WORK!</description><language>en</language></item>
+	<item><guid>57246381026082873347455464435381419970</guid><pubdate>Thu, 12 Mar 2015 05:34:32 +0000</pubdate><description>Yo again</description><language>en</language></item>
+	<item><guid>3582529430775704908880978207502629792</guid><pubdate>Wed, 08 Apr 2015 21:25:41 +0000</pubdate><description>Does it work now?</description><language>en</language></item>
+	<item><guid>195047109921368453155940912994152813925</guid><pubdate>Wed, 08 Apr 2015 22:12:53 +0000</pubdate><description>Do, do, do, do.</description><language>en</language></item>
+    </channel>
+</rss>
