@@ -12,6 +12,11 @@ DATABASES = {
 INSTALLED_APPS = [
     'tests',
     'djublog',
+
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
 ]
 
 SECRET_KEY = 'fake-key'
+
+USE_TZ = True

@@ -4,7 +4,7 @@
         <user_id>1234567890</user_id>
         <user_full_name>Brian Schrader</user_full_name>
         <description>Coffee lover. Typical microblog bio writer. Techie. Foodie.</description>
-        <link>http://127.0.0.1:5000/feed</link>
+        <link>http://microblog.brianschrader.com/feed</link>
         <profile>http://127.0.0.1:5000</profile>
         <blocks count=""/>
         <follows count=""/>
