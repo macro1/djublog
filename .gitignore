@@ -2,6 +2,7 @@
 /*.egg/
 /*.egg-info/
 /*.egg
+/.coverage
 /MANIFEST
 
 __pycache__/

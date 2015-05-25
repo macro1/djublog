@@ -8,6 +8,10 @@ env:
   - DJANGO_VERSION='<1.8,>=1.7'
   - DJANGO_VERSION='<1.9,>=1.8'
 
+before_install: pip install coverage codecov
+
 install: pip install -U Django$DJANGO_VERSION
 
-script: ./setup.py test
+script: coverage run --source=djublog,tests setup.py test
+
+after_success: codecov
