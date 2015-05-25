@@ -84,4 +84,4 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         if not self.statusid and not self.pk:
             self.statusid = models.F('pk')
-        super().save(*args, **kwargs)
+        super(Post, self).save(*args, **kwargs)
