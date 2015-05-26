@@ -30,6 +30,11 @@ class TestFollowedFeed(TestCase):
         self.assertEqual(self.followed.feed.user_id, '1234567890')
         self.assertEqual(self.followed.feed.user_full_name, 'Brian Schrader')
 
+    @responses.activate
+    def test_save_feed(self):
+        feed = models.RemoteFeed(feed_url='http://microblog.brianschrader.com/feed')
+        feed.update_feed()
+
 
 class TestPost(TestCase):
 

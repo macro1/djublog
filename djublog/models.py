@@ -88,6 +88,7 @@ class RemoteFeed(Feed):
                 logger.exception(e)
             else:
                 setattr(self, dest, value)
+        self.save()
         for post in feed:
             self.post_set.update_or_create(
                 statusid=post.guid,
