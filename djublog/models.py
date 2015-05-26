@@ -1,5 +1,6 @@
 import datetime
 import email.utils
+import uuid
 import logging
 
 from django.conf import settings
@@ -118,7 +119,7 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         set_id = False
         if not self.statusid and not self.pk:
-            set_id = True
+            self.statusid = uuid.uuid4().hex
         super(Post, self).save(*args, **kwargs)
         if set_id:
             self.statusid = self.pk
