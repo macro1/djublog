@@ -1,3 +1,4 @@
+import datetime
 import email.utils
 import logging
 
@@ -50,7 +51,8 @@ class LocalFeed(Feed):
         except urlresolvers.NoReverseMatch:
             new_feed.link = urlresolvers.reverse('ufeed')
         new_feed.language = self.language
-        epoch_time = (timezone.now() - timezone.datetime.utcfromtimestamp(0)).total_seconds()
+        epoch = timezone.make_aware(datetime.datetime.utcfromtimestamp(0), timezone.utc)
+        epoch_time = (timezone.now() - epoch).total_seconds()
         new_feed.lastBuildDate = email.utils.formatdate(epoch_time)
         return new_feed
 
