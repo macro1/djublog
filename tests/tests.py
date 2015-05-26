@@ -29,3 +29,15 @@ class TestFollowedFeed(TestCase):
         self.assertEqual(self.followed.feed.username, 'sonicrocketman')
         self.assertEqual(self.followed.feed.user_id, '1234567890')
         self.assertEqual(self.followed.feed.user_full_name, 'Brian Schrader')
+
+
+class TestPost(TestCase):
+
+    def setUp(self):
+        self.feed = models.Feed.objects.create()
+
+    def test_statusid_is_set(self):
+        post = models.Post(feed=self.feed)
+        self.assertFalse(post.statusid)
+        post.save()
+        self.assertEqual(post.pk, post.statusid)

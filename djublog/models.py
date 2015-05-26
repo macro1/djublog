@@ -113,6 +113,10 @@ class Post(models.Model):
         )
 
     def save(self, *args, **kwargs):
+        set_id = False
         if not self.statusid and not self.pk:
-            self.statusid = models.F('pk')
+            set_id = True
         super(Post, self).save(*args, **kwargs)
+        if set_id:
+            self.statusid = self.pk
+            self.save()
