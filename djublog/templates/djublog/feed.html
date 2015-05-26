@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<header>
+  <title>@{{ feed.user.username }}</title>
+</header>
+
+<body>
+  <h1>@{{ feed.user.username }}</h1>
+  {% for post in feed.post_set.all %}
+    <section name="{{ post.id }}">
+      <p>{{ post.description }}</p>
+    </section>
+  {% endfor %}
+</body>
+
+</html>
