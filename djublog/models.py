@@ -1,3 +1,4 @@
+import email.utils
 import logging
 
 from django.conf import settings
@@ -49,9 +50,8 @@ class LocalFeed(Feed):
         except urlresolvers.NoReverseMatch:
             new_feed.link = urlresolvers.reverse('ufeed')
         new_feed.language = self.language
-        new_feed.lastBuildDate = str(timezone.now())
-        for post in self.post_set.all():
-            new_feed.element
+        epoch_time = (timezone.now() - timezone.datetime.utcfromtimestamp(0)).total_seconds()
+        new_feed.lastBuildDate = email.utils.formatdate(epoch_time)
         return new_feed
 
     @property
