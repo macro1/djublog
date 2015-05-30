@@ -14,7 +14,7 @@ from . import feed
 logger = logging.getLogger()
 
 
-class Feed(models.Model):
+class BaseFeed(models.Model):
     FIELDS = (
         ('username', 'username'),
         ('userid', 'user_id'),
@@ -25,12 +25,12 @@ class Feed(models.Model):
     )
     language = models.CharField(editable=False, max_length=100, null=True)
 
+
+class LocalFeed(BaseFeed):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, editable=False)
+
     def __str__(self):
         return '{}: {}'.format(self._meta.verbose_name, self.username)
-
-
-class LocalFeed(Feed):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, editable=False)
 
     @property
     def feed(self):
@@ -66,13 +66,16 @@ class LocalFeed(Feed):
         return self.feed.raw
 
 
-class RemoteFeed(Feed):
+class RemoteFeed(BaseFeed):
     feed_url = models.URLField()
     username = models.CharField(editable=False, max_length=100, null=True)
     userid = models.CharField(editable=False, max_length=100, null=True)
     profile_url = models.URLField(editable=False, null=True)
     build_date = models.DateTimeField(editable=False, null=True)
     raw_feed = models.TextField(editable=False, null=True)
+
+    def __str__(self):
+        return '{}: {}'.format(self._meta.verbose_name, self.username)
 
     @property
     def feed(self):
@@ -107,7 +110,7 @@ class Post(models.Model):
         ('statusid', 'status_id'),
         ('description', 'description'),
     )
-    feed = models.ForeignKey(Feed)
+    feed = models.ForeignKey(BaseFeed)
     statusid = models.CharField(max_length=100, editable=False)
     description = models.TextField()
 

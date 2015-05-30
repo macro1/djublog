@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
 ]
 
+MIDDLEWARE_CLASSES = []
+
 SECRET_KEY = 'fake-key'
 
 USE_TZ = True

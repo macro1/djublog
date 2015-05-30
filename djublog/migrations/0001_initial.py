@@ -13,45 +13,45 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Feed',
+            name='BaseFeed',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('language', models.CharField(null=True, max_length=100, editable=False)),
+                ('id', models.AutoField(auto_created=True, serialize=False, primary_key=True, verbose_name='ID')),
+                ('language', models.CharField(null=True, editable=False, max_length=100)),
             ],
         ),
         migrations.CreateModel(
             name='Post',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('statusid', models.CharField(max_length=100, editable=False)),
+                ('id', models.AutoField(auto_created=True, serialize=False, primary_key=True, verbose_name='ID')),
+                ('statusid', models.CharField(editable=False, max_length=100)),
                 ('description', models.TextField()),
             ],
         ),
         migrations.CreateModel(
             name='LocalFeed',
             fields=[
-                ('feed_ptr', models.OneToOneField(serialize=False, parent_link=True, primary_key=True, to='djublog.Feed', auto_created=True)),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, editable=False)),
+                ('basefeed_ptr', models.OneToOneField(parent_link=True, serialize=False, auto_created=True, primary_key=True, to='djublog.BaseFeed')),
+                ('user', models.OneToOneField(editable=False, to=settings.AUTH_USER_MODEL)),
             ],
-            bases=('djublog.feed',),
+            bases=('djublog.basefeed',),
         ),
         migrations.CreateModel(
             name='RemoteFeed',
             fields=[
-                ('feed_ptr', models.OneToOneField(serialize=False, parent_link=True, primary_key=True, to='djublog.Feed', auto_created=True)),
+                ('basefeed_ptr', models.OneToOneField(parent_link=True, serialize=False, auto_created=True, primary_key=True, to='djublog.BaseFeed')),
                 ('feed_url', models.URLField()),
-                ('username', models.CharField(null=True, max_length=100, editable=False)),
-                ('userid', models.CharField(null=True, max_length=100, editable=False)),
+                ('username', models.CharField(null=True, editable=False, max_length=100)),
+                ('userid', models.CharField(null=True, editable=False, max_length=100)),
                 ('profile_url', models.URLField(null=True, editable=False)),
                 ('build_date', models.DateTimeField(null=True, editable=False)),
                 ('raw_feed', models.TextField(null=True, editable=False)),
             ],
-            bases=('djublog.feed',),
+            bases=('djublog.basefeed',),
         ),
         migrations.AddField(
             model_name='post',
             name='feed',
-            field=models.ForeignKey(to='djublog.Feed'),
+            field=models.ForeignKey(to='djublog.BaseFeed'),
         ),
         migrations.AlterUniqueTogether(
             name='post',
