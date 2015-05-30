@@ -43,7 +43,7 @@ class TestRemoteFeed(TestCase):
     @responses.activate
     def test_raw_feed(self):
         """Check that the raw feed is the full XML document"""
-        self.assertEqual(self.feed.feed.raw[:5].decode('utf-8'), '<rss ')
+        self.assertEqual(self.feed.feed.raw[:6].decode('utf-8'), "<?xml ")
 
     @responses.activate
     def test_user_info(self):
