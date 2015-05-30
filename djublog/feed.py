@@ -34,7 +34,7 @@ class Feed(XMLObject):
 
     @property
     def raw(self):
-        return etree.tostring(self.element.getroottree(), pretty_print=True)
+        return etree.tostring(self.element.getroottree(), pretty_print=True, xml_declaration=True)
 
 
 class Post(XMLObject):
