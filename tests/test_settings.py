@@ -19,6 +19,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE_CLASSES = []
 
+ROOT_URLCONF = 'tests.urls'
+
 SECRET_KEY = 'fake-key'
 
 USE_TZ = True

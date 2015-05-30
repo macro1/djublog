@@ -15,9 +15,9 @@ def feed_view(request, username=None):
     context = {
         'feed': feed,
     }
-    if 'text/html' in request.META.get('HTTP_ACCEPT') and request.GET.get('format') != 'rss':
+    if 'text/html' in request.META.get('HTTP_ACCEPT', []) and request.GET.get('format') != 'rss':
         return render(request, content_type='text/html', context=context, template_name='djublog/feed.html')
-    if 'application/rss+xml' in request.META.get('HTTP_ACCEPT'):
+    if 'application/rss+xml' in request.META.get('HTTP_ACCEPT', []):
         content_type = 'application/rss+xml'
     else:
         content_type = 'application/xml'
