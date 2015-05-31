@@ -1,17 +1,19 @@
 from lxml import etree
 from defusedxml import lxml
 
+UBLOG_NAMESPACE = 'microblog'
+
 
 class XMLObject(object):
     RESERVED = ('element',)
     UB_ELEMENTS = {'status_id', 'username', 'user_id', 'profile', 'user_full_name'}
     NSMAP = {
-        'ub': 'http://openmicroblog.com/',
+        UBLOG_NAMESPACE: 'http://openmicroblog.com/',
     }
 
     def __getattr__(self, name):
         if name in self.UB_ELEMENTS:
-            name = '{{{ns}}}{name}'.format(ns=self.NSMAP['ub'], name=name)
+            name = '{{{ns}}}{name}'.format(ns=self.NSMAP[UBLOG_NAMESPACE], name=name)
         element = self.element.find(name)
         if element is None:
             raise AttributeError("'{}' document has no child '{}'".format(type(self).__name__, name))
@@ -22,11 +24,11 @@ class XMLObject(object):
             return super(XMLObject, self).__setattr__(name, value)
         self.set_subelement(name, value)
 
-    def set_subelement(self, name, value, ns=None):
+    def set_subelement(self, name, value):
         if name in self.UB_ELEMENTS:
-            name = '{{{ns}}}{name}'.format(ns=self.NSMAP.get('ub'), name=name)
+            name = '{{{ns}}}{name}'.format(ns=self.NSMAP[UBLOG_NAMESPACE], name=name)
         element = self.element.find(name)
-        if not element:
+        if element is None:
             element = etree.SubElement(self.element, name)
         element.text = value
 

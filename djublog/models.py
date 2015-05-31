@@ -13,6 +13,8 @@ from . import feed
 
 logger = logging.getLogger()
 
+SITE_URL = settings.SITE_URL
+
 
 class BaseFeed(models.Model):
     FIELDS = (
@@ -43,14 +45,16 @@ class LocalFeed(BaseFeed):
         new_feed = feed.Feed(post_elements)
         new_feed.username = self.user.username
         new_feed.user_id = str(self.user.pk)
+        new_feed.profile = SITE_URL
         try:
-            new_feed.profile = urlresolvers.reverse('ufeed', kwargs={'username': self.user.username})
+            new_feed.profile += urlresolvers.reverse('ufeed', kwargs={'username': self.user.username})
         except urlresolvers.NoReverseMatch:
-            new_feed.profile = urlresolvers.reverse('ufeed')
+            new_feed.profile += urlresolvers.reverse('ufeed')
+        new_feed.link = SITE_URL
         try:
-            new_feed.link = urlresolvers.reverse('ufeed', kwargs={'username': self.user.username})
+            new_feed.link += urlresolvers.reverse('ufeed', kwargs={'username': self.user.username})
         except urlresolvers.NoReverseMatch:
-            new_feed.link = urlresolvers.reverse('ufeed')
+            new_feed.link += urlresolvers.reverse('ufeed')
         new_feed.language = self.language
         epoch = timezone.make_aware(datetime.datetime.utcfromtimestamp(0), timezone.utc)
         epoch_time = (timezone.now() - epoch).total_seconds()

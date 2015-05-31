@@ -23,4 +23,6 @@ ROOT_URLCONF = 'tests.urls'
 
 SECRET_KEY = 'fake-key'
 
+SITE_URL = 'http://example.com'
+
 USE_TZ = True
