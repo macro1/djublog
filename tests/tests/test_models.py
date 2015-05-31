@@ -30,28 +30,30 @@ class TestLocalFeed(TestCase):
 class TestRemoteFeed(TestCase):
 
     def setUp(self):
-        self.feed = models.RemoteFeed.objects.create(feed_url='http://microblog.brianschrader.com/feed')
+        feed_url = 'http://microblog.brianschrader.com/feed'
+        self.feed = models.RemoteFeed.objects.create(feed_url=feed_url)
         with open(os.path.join(settings.BASE_DIR, 'tests', 'fixtures', 'sonic_feed.xml')) as fixture_file:
             self.test_feed = fixture_file.read()
-        responses.add(responses.GET, self.feed.feed_url, body=self.test_feed,
+        responses.add(responses.GET, feed_url, body=self.test_feed,
                       status=200, content_type='application/xml')
+        responses.start()
         self.feed.update_feed()
+
+    def tearDown(self):
+        responses.stop()
 
     def test_str(self):
         self.assertEqual(str(self.feed), 'remote feed: sonicrocketman')
 
-    @responses.activate
     def test_raw_feed(self):
         """Check that the raw feed is the full XML document"""
         self.assertEqual(self.feed.feed.raw[:6].decode('utf-8'), "<?xml ")
 
-    @responses.activate
     def test_user_info(self):
         self.assertEqual(self.feed.feed.username, 'sonicrocketman')
         self.assertEqual(self.feed.feed.user_id, '1234567890')
         self.assertEqual(self.feed.feed.user_full_name, 'Brian Schrader')
 
-    @responses.activate
     def test_save_feed(self):
         feed = models.RemoteFeed(feed_url='http://microblog.brianschrader.com/feed')
         feed.update_feed()

@@ -1,20 +1,21 @@
-from functools import partial
-
 from lxml import etree
 from defusedxml import lxml
 
 
 class XMLObject(object):
     RESERVED = ('element',)
-    UB_ELEMENTS = {'status_id', 'username', 'user_id', 'profile', 'link'}
+    UB_ELEMENTS = {'status_id', 'username', 'user_id', 'profile', 'user_full_name'}
     NSMAP = {
-        'ub': 'https://github.com/Sonictherocketman/Open-Microblog',
+        'ub': 'http://openmicroblog.com/',
     }
 
     def __getattr__(self, name):
         if name in self.UB_ELEMENTS:
-            name = '{{{ns}}}{name}'.format(ns=self.NSMAP.get('ub'), name=name)
-        return self.element.find(name).text
+            name = '{{{ns}}}{name}'.format(ns=self.NSMAP['ub'], name=name)
+        element = self.element.find(name)
+        if element is None:
+            raise AttributeError("'{}' document has no child '{}'".format(type(self).__name__, name))
+        return element.text
 
     def __setattr__(self, name, value):
         if name in self.RESERVED:
@@ -28,6 +29,7 @@ class XMLObject(object):
         if not element:
             element = etree.SubElement(self.element, name)
         element.text = value
+
 
 class Feed(XMLObject):
 
@@ -43,8 +45,6 @@ class Feed(XMLObject):
     def __iter__(self):
         for post_element in self.element.findall('item'):
             yield Post(element=post_element)
-
-    username = property(fset=partial(XMLObject.set_subelement, ns='ublog'))
 
     @property
     def raw(self):
