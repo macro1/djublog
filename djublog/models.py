@@ -40,7 +40,13 @@ class LocalFeed(BaseFeed):
     def feed(self):
         new_feed = feed.Feed()
         new_feed.title = self.title
+        new_feed.link = SITE_URL
+        try:
+            new_feed.link += urlresolvers.reverse('ufeed', kwargs={'username': self.user.username})
+        except urlresolvers.NoReverseMatch:
+            new_feed.link += urlresolvers.reverse('ufeed')
         new_feed.description = self.description
+        new_feed.language = self.language
         new_feed.username = self.user.username
         new_feed.user_id = str(self.user.pk)
         new_feed.profile = SITE_URL
@@ -48,18 +54,13 @@ class LocalFeed(BaseFeed):
             new_feed.profile += urlresolvers.reverse('ufeed', kwargs={'username': self.user.username})
         except urlresolvers.NoReverseMatch:
             new_feed.profile += urlresolvers.reverse('ufeed')
-        new_feed.link = SITE_URL
-        try:
-            new_feed.link += urlresolvers.reverse('ufeed', kwargs={'username': self.user.username})
-        except urlresolvers.NoReverseMatch:
-            new_feed.link += urlresolvers.reverse('ufeed')
-        new_feed.language = self.language
         epoch = timezone.make_aware(datetime.datetime.utcfromtimestamp(0), timezone.utc)
         epoch_time = (timezone.now() - epoch).total_seconds()
         new_feed.lastBuildDate = email.utils.formatdate(epoch_time)
         for post in self.post_set.all():
             post_element = feed.Post()
             post_element.guid = post.guid
+            post_element.pubDate = email.utils.formatdate((post.pub_date - epoch).total_seconds())
             post_element.description = post.description
             new_feed.element.append(post_element.element)
         return new_feed
@@ -116,10 +117,12 @@ class Post(models.Model):
     FIELDS = (
         ('guid', 'guid'),
         ('description', 'description'),
+        ('pub_date', 'pubDate'),
     )
     feed = models.ForeignKey(BaseFeed)
     guid = models.CharField(max_length=100, editable=False)
     description = models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = (

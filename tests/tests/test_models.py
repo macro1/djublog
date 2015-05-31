@@ -1,8 +1,10 @@
 import os
+import sys
 
 from django.conf import settings
 from django.contrib import auth
 from django.test import TestCase
+from lxml import etree
 import responses
 
 from djublog import models
@@ -21,10 +23,23 @@ class TestLocalFeed(TestCase):
 
     def setUp(self):
         self.user = auth.get_user_model().objects.create(username='tester')
-        self.feed = models.LocalFeed.objects.create(user=self.user)
+        self.feed = models.LocalFeed.objects.create(user=self.user, language='en-us')
+        self.post = self.feed.post_set.create()
 
     def test_str(self):
         self.assertEqual(str(self.feed), 'local feed: tester')
+
+    def check_schema(self, feed, schema):
+        raw_feed = feed.feed.raw
+        with open(os.path.join(settings.BASE_DIR, 'tests', 'fixtures', '{}.xsd'.format(schema))) as rss_xsd_file:
+            rss_xsd_element = etree.XML(rss_xsd_file.read().encode('utf-8'))
+            rss_schema = etree.XMLSchema(rss_xsd_element)
+            rss_parser = etree.XMLParser(schema=rss_schema)
+        etree.fromstring(raw_feed, parser=rss_parser)
+
+    def test_is_valid_rss(self):
+        self.check_schema(self.feed, 'rss20')
+
 
 
 class TestRemoteFeed(TestCase):

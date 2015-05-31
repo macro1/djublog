@@ -48,13 +48,13 @@ class Feed(XMLObject):
             yield Post(element=post_element)
 
     def __setattr__(self, name, value):
+        super(Feed, self).__setattr__(name, value)
         if name == 'link':
             atom_name = '{http://www.w3.org/2005/Atom}link'
             element = self.element.find(atom_name)
             if element is None:
                 element = etree.SubElement(self.element, atom_name, attrib={'rel': 'self', 'type': 'application/rss+xml'})
             element.attrib['href'] = value
-        super(Feed, self).__setattr__(name, value)
 
     @property
     def raw(self):
