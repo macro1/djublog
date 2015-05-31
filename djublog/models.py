@@ -25,7 +25,9 @@ class BaseFeed(models.Model):
         ('language', 'language'),
         ('build_date', 'lastBuildDate'),
     )
-    language = models.CharField(editable=False, max_length=100, null=True)
+    title = models.CharField(max_length=100, null=True)
+    description = models.TextField(null=True)
+    language = models.CharField(max_length=100, null=True)
 
 
 class LocalFeed(BaseFeed):
@@ -36,13 +38,9 @@ class LocalFeed(BaseFeed):
 
     @property
     def feed(self):
-        post_elements = []
-        for post in self.post_set.all():
-            post_element = feed.Post()
-            post_element.status_id = post.statusid
-            post_element.description = post.description
-            post_elements.append(post_element.element)
-        new_feed = feed.Feed(post_elements)
+        new_feed = feed.Feed()
+        new_feed.title = self.title
+        new_feed.description = self.description
         new_feed.username = self.user.username
         new_feed.user_id = str(self.user.pk)
         new_feed.profile = SITE_URL
@@ -59,6 +57,11 @@ class LocalFeed(BaseFeed):
         epoch = timezone.make_aware(datetime.datetime.utcfromtimestamp(0), timezone.utc)
         epoch_time = (timezone.now() - epoch).total_seconds()
         new_feed.lastBuildDate = email.utils.formatdate(epoch_time)
+        for post in self.post_set.all():
+            post_element = feed.Post()
+            post_element.guid = post.guid
+            post_element.description = post.description
+            new_feed.element.append(post_element.element)
         return new_feed
 
     @property
@@ -101,7 +104,7 @@ class RemoteFeed(BaseFeed):
         self.save()
         for post in feed:
             self.post_set.update_or_create(
-                statusid=post.guid,
+                guid=post.guid,
                 defaults={
                     'description': post.description,
                 },
@@ -111,23 +114,23 @@ class RemoteFeed(BaseFeed):
 
 class Post(models.Model):
     FIELDS = (
-        ('statusid', 'status_id'),
+        ('guid', 'guid'),
         ('description', 'description'),
     )
     feed = models.ForeignKey(BaseFeed)
-    statusid = models.CharField(max_length=100, editable=False)
+    guid = models.CharField(max_length=100, editable=False)
     description = models.TextField()
 
     class Meta:
         unique_together = (
-            ('feed', 'statusid'),
+            ('feed', 'guid'),
         )
 
     def save(self, *args, **kwargs):
         set_id = False
-        if not self.statusid and not self.pk:
-            self.statusid = uuid.uuid4().hex
+        if not self.guid and not self.pk:
+            self.guid = uuid.uuid4().hex
         super(Post, self).save(*args, **kwargs)
         if set_id:
-            self.statusid = self.pk
+            self.guid = self.pk
             self.save()

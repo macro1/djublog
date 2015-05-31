@@ -64,8 +64,8 @@ class TestPost(TestCase):
     def setUp(self):
         self.feed = models.BaseFeed.objects.create()
 
-    def test_statusid_is_set(self):
+    def test_guid_is_set(self):
         post = models.Post(feed=self.feed)
-        self.assertFalse(post.statusid)
+        self.assertFalse(post.guid)
         post.save()
-        self.assertIsNotNone(post.statusid)
+        self.assertIsNotNone(post.guid)

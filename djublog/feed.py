@@ -9,6 +9,7 @@ class XMLObject(object):
     UB_ELEMENTS = {'status_id', 'username', 'user_id', 'profile', 'user_full_name'}
     NSMAP = {
         UBLOG_NAMESPACE: 'http://openmicroblog.com/',
+        'atom': 'http://www.w3.org/2005/Atom',
     }
 
     def __getattr__(self, name):
@@ -35,18 +36,25 @@ class XMLObject(object):
 
 class Feed(XMLObject):
 
-    def __init__(self, posts=None, raw=None):
+    def __init__(self, raw=None):
         if raw:
             self.element = lxml.fromstring(raw).find('channel')
         else:
             root = etree.Element('rss', attrib={'version': '2.0'}, nsmap=self.NSMAP)
             self.element = etree.SubElement(root, 'channel')
-            for post in posts:
-                self.element.append(post)
 
     def __iter__(self):
         for post_element in self.element.findall('item'):
             yield Post(element=post_element)
+
+    def __setattr__(self, name, value):
+        if name == 'link':
+            atom_name = '{http://www.w3.org/2005/Atom}link'
+            element = self.element.find(atom_name)
+            if element is None:
+                element = etree.SubElement(self.element, atom_name, attrib={'rel': 'self', 'type': 'application/rss+xml'})
+            element.attrib['href'] = value
+        super(Feed, self).__setattr__(name, value)
 
     @property
     def raw(self):
@@ -60,3 +68,8 @@ class Post(XMLObject):
             self.element = element
         else:
             self.element = etree.Element('item')
+
+    def __setattr__(self, name, value):
+        super(Post, self).__setattr__(name, value)
+        if name == 'guid':
+            self.element.find('guid').attrib['isPermaLink'] = 'false'
